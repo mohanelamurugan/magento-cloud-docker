@@ -12,6 +12,8 @@ use Magento\CloudDocker\Compose\ProductionBuilder\VolumeResolver;
 use Magento\CloudDocker\Config\Config;
 use Magento\CloudDocker\Config\Environment\Converter;
 use Magento\CloudDocker\App\ConfigurationMismatchException;
+use Magento\CloudDocker\Config\Source\SourceException;
+use Magento\CloudDocker\Config\Source\SourceInterface;
 use Magento\CloudDocker\Filesystem\FileList;
 use Magento\CloudDocker\Service\ServiceFactory;
 use Magento\CloudDocker\Service\ServiceInterface;
@@ -252,6 +254,8 @@ class ProductionBuilder implements BuilderInterface
             []
         );
 
+        $esEnvVars = $config->get(SourceInterface::SERVICES_ES_ENV_VARS);
+
         foreach (self::$standaloneServices as $service) {
             if (!$config->hasServiceEnabled($service)) {
                 continue;
@@ -259,7 +263,13 @@ class ProductionBuilder implements BuilderInterface
 
             $manager->addService(
                 $service,
-                $this->serviceFactory->create((string)$service, (string)$config->getServiceVersion($service)),
+                $this->serviceFactory->create(
+                    (string)$service,
+                    (string)$config->getServiceVersion($service),
+                    self::SERVICE_ELASTICSEARCH === $service && !empty($esEnvVars)
+                        ? ['environment' => $esEnvVars]
+                        : []
+                ),
                 [self::NETWORK_MAGENTO],
                 []
             );

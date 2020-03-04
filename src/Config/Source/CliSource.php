@@ -49,6 +49,11 @@ class CliSource implements SourceInterface
     public const OPTION_ENV_VARIABLES = 'env-vars';
 
     /**
+     * Environment variable for elasticsearch service.
+     */
+    public const OPTION_ES_EVN_VAR = 'es-env-var';
+
+    /**
      * Option key to config name map
      *
      * @var array
@@ -173,6 +178,10 @@ class CliSource implements SourceInterface
 
         if ($port = $this->input->getOption(self::OPTION_EXPOSE_DB_PORT)) {
             $repository->set(self::SYSTEM_EXPOSE_DB_PORTS, $port);
+        }
+
+        if ($esEnvVars = $this->input->getOption(self::OPTION_ES_EVN_VAR)) {
+            $repository->set(self::SERVICES_ES_ENV_VARS, $esEnvVars);
         }
 
         return $repository;

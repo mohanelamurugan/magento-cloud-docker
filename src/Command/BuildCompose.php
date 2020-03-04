@@ -205,6 +205,12 @@ class BuildCompose extends Command
                 null,
                 InputOption::VALUE_OPTIONAL,
                 'Cloud environment variables'
+            )
+            ->addOption(
+                Source\CliSource::OPTION_ES_EVN_VAR,
+                null,
+                InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
+                "Environment variable for elasticsearch service"
             );
 
         parent::configure();
